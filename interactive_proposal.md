@@ -77,7 +77,7 @@ The migration flows will be animated over time, showing the dynamic movement of 
 
 ## Mock-up of Visualization
 
-![Mock-up](/Users/magdalenabarros/InteractiveViz/mock_up/drawing.svg)
+![Mock-up](mock_up/drawing.svg)
 
 ---
 
