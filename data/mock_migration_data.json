@@ -1,0 +1,134 @@
+[
+    {
+        "Country": "USA",
+        "Population": 334.9,
+        "year": 2020,
+        "Migration to Country": "China",
+        "Migration Population": 0.7951184199655247,
+        "Population dots": 3349,
+        "Migration Country": "China",
+        "Migration dots (total)": 7,
+        "dot colors": "Blue"
+    },
+    {
+        "Country": "USA",
+        "Population": 334.9,
+        "year": 2020,
+        "Migration to Country": "Spain",
+        "Migration Population": 0.2657537329830799,
+        "Population dots": 3349,
+        "Migration Country": "Spain",
+        "Migration dots (total)": 2,
+        "dot colors": "Blue"
+    },
+    {
+        "Country": "USA",
+        "Population": 334.9,
+        "year": 2021,
+        "Migration to Country": "China",
+        "Migration Population": 4.843050223921105,
+        "Population dots": 3349,
+        "Migration Country": "China",
+        "Migration dots (total)": 48,
+        "dot colors": "Blue"
+    },
+    {
+        "Country": "USA",
+        "Population": 334.9,
+        "year": 2021,
+        "Migration to Country": "Spain",
+        "Migration Population": 1.8919925321397895,
+        "Population dots": 3349,
+        "Migration Country": "Spain",
+        "Migration dots (total)": 18,
+        "dot colors": "Blue"
+    },
+    {
+        "Country": "USA",
+        "Population": 334.9,
+        "year": 2022,
+        "Migration to Country": "China",
+        "Migration Population": 3.8435519856201914,
+        "Population dots": 3349,
+        "Migration Country": "China",
+        "Migration dots (total)": 38,
+        "dot colors": "Blue"
+    },
+    {
+        "Country": "USA",
+        "Population": 334.9,
+        "year": 2022,
+        "Migration to Country": "Spain",
+        "Migration Population": 3.9677110655670162,
+        "Population dots": 3349,
+        "Migration Country": "Spain",
+        "Migration dots (total)": 39,
+        "dot colors": "Blue"
+    },
+    {
+        "Country": "Mexico",
+        "Population": 128.5,
+        "year": 2020,
+        "Migration to Country": "USA",
+        "Migration Population": 3.863374424008101,
+        "Population dots": 1285,
+        "Migration Country": "USA",
+        "Migration dots (total)": 38,
+        "dot colors": "Red"
+    },
+    {
+        "Country": "Mexico",
+        "Population": 128.5,
+        "year": 2020,
+        "Migration to Country": "Spain",
+        "Migration Population": 1.624564457581663,
+        "Population dots": 1285,
+        "Migration Country": "Spain",
+        "Migration dots (total)": 16,
+        "dot colors": "Red"
+    },
+    {
+        "Country": "Mexico",
+        "Population": 128.5,
+        "year": 2021,
+        "Migration to Country": "USA",
+        "Migration Population": 3.7712246866274586,
+        "Population dots": 1285,
+        "Migration Country": "USA",
+        "Migration dots (total)": 37,
+        "dot colors": "Red"
+    },
+    {
+        "Country": "Mexico",
+        "Population": 128.5,
+        "year": 2021,
+        "Migration to Country": "Spain",
+        "Migration Population": 2.3391131053305525,
+        "Population dots": 1285,
+        "Migration Country": "Spain",
+        "Migration dots (total)": 23,
+        "dot colors": "Red"
+    },
+    {
+        "Country": "Mexico",
+        "Population": 128.5,
+        "year": 2022,
+        "Migration to Country": "USA",
+        "Migration Population": 3.4818824707646354,
+        "Population dots": 1285,
+        "Migration Country": "USA",
+        "Migration dots (total)": 34,
+        "dot colors": "Red"
+    },
+    {
+        "Country": "Mexico",
+        "Population": 128.5,
+        "year": 2022,
+        "Migration to Country": "Spain",
+        "Migration Population": 2.793408598146665,
+        "Population dots": 1285,
+        "Migration Country": "Spain",
+        "Migration dots (total)": 27,
+        "dot colors": "Red"
+    }
+]
