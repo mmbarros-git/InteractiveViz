@@ -8,7 +8,7 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            scroll-behavior: smooth; /* Desplazamiento suave */
+            scroll-behavior: smooth;
         }
 
         nav {
@@ -35,10 +35,10 @@
         }
 
         .iframe-container {
-            margin-top: 60px; /* Espacio debajo del navbar */
+            margin-top: 60px; 
             display: flex;
             flex-direction: column;
-            gap: 20px; /* Espacio entre los iframes */
+            gap: 20px; 
         }
 
         iframe {
@@ -48,7 +48,7 @@
         }
 
         .highlight {
-            outline: 5px solid rgba(0, 123, 255, 0.5); /* Resalta el iframe activo */
+            outline: 5px solid rgba(0, 123, 255, 0.5); 
         }
     </style>
 </head>
@@ -70,34 +70,29 @@
     </div>
 
     <script>
-        // Función para desplazarse y ajustar la posición del iframe seleccionado
+        
         function scrollToIframe(event, iframeId) {
-            event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
-
-            // Seleccionar el iframe al que queremos desplazarnos
+            event.preventDefault(); 
+            
             const iframe = document.getElementById(iframeId);
 
-            // Calcular la posición ajustada para que el iframe quede centrado
-            const yOffset = -50; // Ajusta este valor para corregir el desplazamiento exacto
+            const yOffset = -50; 
             const yPosition = iframe.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
-            // Desplazar la página
             window.scrollTo({
                 top: yPosition,
                 behavior: 'smooth',
             });
 
-            // Resaltar el iframe activo
             highlightIframe(iframeId);
         }
 
-        // Función para resaltar el iframe seleccionado
+        
         function highlightIframe(iframeId) {
-            // Eliminar el resaltado de todos los iframes
+            
             const iframes = document.querySelectorAll('iframe');
             iframes.forEach(iframe => iframe.classList.remove('highlight'));
 
-            // Resaltar el iframe seleccionado
             const selectedIframe = document.getElementById(iframeId);
             if (selectedIframe) {
                 selectedIframe.classList.add('highlight');

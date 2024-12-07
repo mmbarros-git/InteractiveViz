@@ -19,11 +19,11 @@
     .main-container {
       display: flex;
       width: 100%;
-      height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
+      height: 100vh; 
     }
   
     .header-container {
-      width: 20%; /* Reducido a 20% */
+      width: 20%; 
       box-sizing: border-box;
       padding: 20px;
     }
@@ -47,7 +47,7 @@
     }
   
     #my_dataviz-container {
-      width: 65%; /* Aumentado para el mapa */
+      width: 65%; 
       position: relative;
       box-sizing: border-box;
       padding: 10px;
@@ -58,7 +58,7 @@
   
     #my_dataviz {
       width: 100%;
-      height: 800px; /* Altura fija para el mapa */
+      height: 800px; 
       background-color: #f0feff;
       margin-bottom: 20px;
     }
@@ -67,20 +67,19 @@
       margin-top: 10px;
       text-align: center;
       font-size: 16px;
-      margin-bottom: 10px; /* Espaciado reducido */
+      margin-bottom: 10px; 
     }
   
     #bottom-controls {
       display: flex;
-      /*flex-direction: column;*/
       justify-content: center;
       align-items: center;
       gap: 20px;
-      margin-top: 10px; /* Subir el contenido para que quede centrado */
+      margin-top: 10px; 
     }
   
     #controls {
-      width: 15%; /* Aumentado a 15% */
+      width: 15%; 
       background-color: #f0f0f0;
       box-sizing: border-box;
       padding: 10px;
@@ -96,7 +95,7 @@
       padding: 5px;
       font-size: 14px;
       font-family: 'Roboto', sans-serif;
-      color: #4a4a4a; /* Texto gris oscuro */
+      color: #4a4a4a; 
     }
   
     #play-button {
@@ -132,7 +131,7 @@
 </head>
 <body>
     <div class="main-container">
-        <!-- Columna de explicación -->
+        <!-- Overview Column -->
         <div class="header-container">
           <header class="visualization-header">
             <h1>Tracing Journeys Global Migration<br>
@@ -162,7 +161,7 @@
           </div>
         </div>
       
-        <!-- Columna del mapa -->
+        <!-- Map Column -->
         <div id="my_dataviz-container">
             <svg id="my_dataviz"></svg>
             <div class="map-label">
@@ -180,7 +179,7 @@
           </div>
           
       
-        <!-- Columna de controles -->
+        <!-- Filter Column -->
         <div id="controls">
           <h2>Filters</h2>
           <select id="country-filter" multiple>
@@ -342,21 +341,21 @@
             const destinationFeatures = splittedCountries.filter(f => f.properties.name === Destination);
     
             if (originFeatures.length && destinationFeatures.length) {
-                // Encontrar el polígono más grande para el origen
+                // Find the largest polygon for origin
                 const largestOriginFeature = originFeatures.reduce((largest, current) => {
                     const largestArea = d3.polygonArea(largest.geometry.coordinates[0]);
                     const currentArea = d3.polygonArea(current.geometry.coordinates[0]);
                     return currentArea > largestArea ? current : largest;
                 });
     
-                // Encontrar el polígono más grande para el destino
+                // Find the largest polygon for destination
                 const largestDestFeature = destinationFeatures.reduce((largest, current) => {
                     const largestArea = d3.polygonArea(largest.geometry.coordinates[0]);
                     const currentArea = d3.polygonArea(current.geometry.coordinates[0]);
                     return currentArea > largestArea ? current : largest;
                 });
     
-                // Generar puntos dentro del polígono más grande del origen
+                // Generate points within the largest polygon of the origin
                 const originBounds = path.bounds(largestOriginFeature);
                 const [originMinX, originMinY] = originBounds[0];
                 const [originMaxX, originMaxY] = originBounds[1];
@@ -374,7 +373,7 @@
                     attempts++;
                 }
     
-                // Generar destinos dispersos dentro del polígono más grande del destino
+                // Generate scattered destinations within the larger polygon of the destination
                 const destBounds = path.bounds(largestDestFeature);
                 const [destMinX, destMinY] = destBounds[0];
                 const [destMaxX, destMaxY] = destBounds[1];
@@ -392,8 +391,8 @@
                     attempts++;
                 }
     
-                // Dibujar y animar los triángulos
-                const size = 6; // Tamaño del triángulo
+                // Drawing and animating triangles
+                const size = 6; 
                 const migratingTriangles = svg.append("g")
                     .attr("class", "migrating-dots")
                     .selectAll("path")
@@ -409,7 +408,7 @@
                     .attr("opacity", 0.7);
     
                 migratingTriangles.transition()
-                    .duration(5000) // Tiempo de animación
+                    .duration(5000) 
                     .attr("transform", (d, i) => {
                         const [destX, destY] = destinationPoints[i];
                         return `translate(${destX - d[0]}, ${destY - d[1]})`;
@@ -430,29 +429,24 @@
         const nextYearIndex = years.indexOf(currentYear) + 1;
     
         if (nextYearIndex >= years.length) {
-            // Si llegamos al final (2020), detener la animación
             clearTimeout(timer);
             playButton.text("▶");
             isPlaying = false;
         } else {
-            // Avanzar al siguiente año
             currentYear = years[nextYearIndex];
             drawDots(currentYear);
             drawMigration(currentYear);
             timeline.property("value", currentYear);
     
-            // Continuar la animación
             timer = setTimeout(startAnimation, delay);
         }
     };
     
     playButton.on("click", () => {
         if (isPlaying) {
-            // Pausar la animación
             clearTimeout(timer);
             playButton.text("▶");
         } else {
-            // Iniciar o continuar la animación
             startAnimation();
             playButton.text("||");
         }
