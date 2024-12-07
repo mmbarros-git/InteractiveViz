@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Global Migration Explorer</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f9;
+      color: #555555;
+    }
+
+    .visualization-header {
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr; /* Tres columnas */
+      gap: 20px;
+      align-items: center; /* Centra verticalmente los elementos */
+      margin: 30px auto;
+      max-width: 1200px;
+    }
+
+    /* Primera columna: Explicación */
+    .explanation {
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+
+    .explanation h2 {
+      color: #555555;
+    }
+
+    /* Segunda columna: Íconos y texto */
+    .icons-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .icons {
+      display: grid;
+      grid-template-columns: repeat(10, 32px); /* Íconos en una cuadrícula */
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .person {
+      font-size: 32px; /* Tamaño de los íconos */
+      color: #555555;
+    }
+
+    .person.migration {
+      color: #007bff;
+    }
+
+    .person.immigration {
+      color: #ff6347;
+    }
+
+    .year-info {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .year-info p {
+      font-size: 1.2em; /* Texto más grande */
+      font-weight: bold;
+    }
+
+    #play-button {
+      margin: 20px 0;
+      padding: 15px 30px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    #play-button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Tercera columna: Filtro */
+    #dropdown-container {
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    #dropdown-container label {
+      font-weight: bold;
+    }
+
+    #country-select {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+      width: 100%;
+      color: #555555
+
+    }
+
+    #migration-info span {
+        color: #007bff; /* Blue for Migration */
+        font-weight: bold;
+      }
+      #migration-info .immigration {
+        color: #ff6347; /* Red for Immigration */
+        font-weight: bold;
+      }
+
+      .migration {
+        color: #007bff; /* Azul para Migration */
+        font-weight: bold;
+      }
+      
+      .immigration {
+        color: #ff6347; /* Rojo para Immigration */
+        font-weight: bold;
+      }
+      
+
+  </style>
+</head>
+<body>
+  <!-- Título -->
+  <header class="visualization-header">
+    <h1>Icons of Movement: Global Migration and Immigration (1990–2020)</h1>
+  </header>
+
+  <!-- Contenedor principal -->
+  <div class="main-container">
+    <!-- Primera columna: Explicación -->
+    <div class="explanation">
+      <h2>Overview</h2>
+      <p>
+        This visualization explores global migration patterns and population dynamics. Each icon represents a percentage of
+        <span class="migration">migration</span> or <span class="immigration">immigration</span> for a given year and country.
+      </p>
+      
+    </div>
+
+    <!-- Segunda columna: Íconos y texto -->
+    <div class="icons-container">
+      <div id="icons" class="icons"></div>
+      <div class="year-info">
+        <h2 id="year-display">Year: 1990</h2>
+        <p id="population-info">Total Population: 5.33 billion</p>
+        <p id="migration-info">
+          Migration: <span id="migration-percentage">2.87%</span>, 
+          Immigration: <span class="immigration" id="immigration-percentage">N/A</span>
+        </p>
+      </div>
+      <button id="play-button">Play</button>
+    </div>
+
+    <!-- Tercera columna: Filtro -->
+    <div id="dropdown-container">
+      <label for="country-select">Select Country:</label>
+      <select id="country-select">
+        <option value="World" selected>World</option>
+      </select>
+    </div>
+  </div>
+
+  <script>
+    const totalIcons = 100;
+    const container = d3.select("#icons");
+    const yearDisplay = d3.select("#year-display");
+    const populationInfo = d3.select("#population-info");
+    const migrationPercentage = d3.select("#migration-percentage");
+    const immigrationPercentage = d3.select("#immigration-percentage");
+    const countrySelect = d3.select("#country-select");
+
+    let currentYearIndex = 0;
+    let playInterval;
+    let data = [];
+    let filteredData = [];
+    let isWorld = true;
+
+    const worldData = [
+      { Year: 1990, "Population in millions": "5.33 billion", "Migration %": "2.87%", "Immigration %": null },
+      { Year: 1995, "Population in millions": "5.76 billion", "Migration %": "2.80%", "Immigration %": null },
+      { Year: 2000, "Population in millions": "6.17 billion", "Migration %": "2.81%", "Immigration %": null },
+      { Year: 2005, "Population in millions": "6.59 billion", "Migration %": "2.91%", "Immigration %": null },
+      { Year: 2010, "Population in millions": "7.02 billion", "Migration %": "3.15%", "Immigration %": null },
+      { Year: 2015, "Population in millions": "7.47 billion", "Migration %": "3.32%", "Immigration %": null },
+      { Year: 2020, "Population in millions": "7.89 billion", "Migration %": "3.56%", "Immigration %": null }
+    ];
+
+    const icons = Array.from({ length: totalIcons });
+    container.selectAll(".person")
+      .data(icons)
+      .enter()
+      .append("i")
+      .attr("class", "fas fa-user person");
+
+    function updateVisualization(index) {
+      const yearData = isWorld ? worldData[index] : filteredData[index];
+      if (!yearData) return;
+
+      const migrationIcons = Math.round((parseFloat(yearData["Migration %"]) / 100) * totalIcons);
+      const immigrationIcons = yearData["Immigration %"]
+        ? Math.round((parseFloat(yearData["Immigration %"]) / 100) * totalIcons)
+        : 0;
+
+      yearDisplay.text(`Year: ${yearData.Year}`);
+      populationInfo.text(`Total Population: ${yearData["Population in millions"]}`);
+      migrationPercentage.text(yearData["Migration %"]);
+      immigrationPercentage.text(yearData["Immigration %"] || "N/A");
+
+      container.selectAll(".person")
+        .classed("migration", false)
+        .classed("immigration", false)
+        .data(d3.shuffle(icons))
+        .each(function(d, i) {
+          if (i < migrationIcons) {
+            d3.select(this).classed("migration", true);
+          } else if (i < migrationIcons + immigrationIcons) {
+            d3.select(this).classed("immigration", true);
+          }
+        });
+    }
+
+    function playVisualization() {
+      if (playInterval) {
+        clearInterval(playInterval);
+        playInterval = null;
+      } else {
+        playInterval = setInterval(() => {
+          currentYearIndex = (currentYearIndex + 1) % (isWorld ? worldData.length : filteredData.length);
+          updateVisualization(currentYearIndex);
+
+          if (currentYearIndex === (isWorld ? worldData.length : filteredData.length) - 1) {
+            clearInterval(playInterval);
+            playInterval = null;
+            currentYearIndex = 0;
+          }
+        }, 1000);
+      }
+    }
+
+    d3.json("data/population_data.json").then(jsonData => {
+      data = jsonData;
+      const countries = Array.from(new Set(data.map(d => d.Country))).sort();
+
+      countrySelect.selectAll("option")
+        .data(countries)
+        .enter()
+        .append("option")
+        .attr("value", d => d)
+        .text(d => d);
+
+      countrySelect.on("change", function() {
+        const selectedCountry = this.value;
+        if (selectedCountry === "World") {
+          isWorld = true;
+          filteredData = [];
+          currentYearIndex = 0;
+          updateVisualization(currentYearIndex);
+        } else {
+          isWorld = false;
+          filteredData = data.filter(d => d.Country === selectedCountry && d.Year >= 1990 && d.Year <= 2020);
+          if (filteredData.length > 0) {
+            currentYearIndex = 0;
+            updateVisualization(currentYearIndex);
+          }
+        }
+      });
+    });
+
+    isWorld = true;
+    updateVisualization(currentYearIndex);
+
+    d3.select("#play-button").on("click", playVisualization);
+  </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracing Journeys</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Roboto, sans-serif;
+            background: url('migration2.jpg') no-repeat center center fixed; /* Cambia 'path/to/your/image.jpg' por la ruta de tu imagen */
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 123, 255, 0.7); /* Filtro azul */
+            z-index: -1;
+        }
+
+        .content {
+            text-align: center;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        .content h1 {
+            font-size: 3em; /* Tamaño del título */
+            margin-bottom: 10px; /* Espacio debajo del título */
+        }
+
+        .content h2 {
+            font-size: 1.8em; /* Tamaño del subtítulo */
+            margin-bottom: 20px; /* Espacio debajo del subtítulo */
+            font-weight: normal; /* Subtítulo más ligero */
+        }
+
+        .content p {
+            font-size: 1.1em;
+            line-height: 1.8; /* Ajusta el espaciado entre líneas */
+            margin-bottom: 30px; /* Agrega espacio entre párrafos */
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer {
+            background-color: #f0f0f0;
+            text-align: center;
+            padding: 10px;
+            color: #6a6a6a;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer h3 {
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .footer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer li {
+            margin: 5px 0;
+        }
+
+        .footer a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .icon-link {
+            color: white; /* Color blanco para los íconos */
+            margin-left: 10px; /* Espacio entre el nombre y los íconos */
+            text-decoration: none; /* Quitar subrayado en los enlaces */
+        }
+    
+        .icon-link:hover {
+            color: #007bff; /* Cambiar el color al pasar el mouse (opcional) */
+        }
+    
+        /* Asegúrate de que el texto circundante también sea blanco */
+        strong {
+            color: white;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Tracing Journeys</h1>
+        <h2>Visualizing 30 years of Global Migration and Population Change</h2>
+        <p>
+            <strong>By: Magdalena Barros</strong>
+            <a href="https://github.com/mmbarros-git" target="_blank" title="GitHub Profile" class="icon-link">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/magdalena-barros" target="_blank" title="LinkedIn Profile" class="icon-link">
+                <i class="fab fa-linkedin"></i>
+            </a>
+        </p>
+        
+        <p>
+            Welcome to a dynamic exploration of how populations have evolved and migrated over the past three decades. 
+            This project offers a comprehensive look at demographic trends, uncovering the forces that drive global movement 
+            and reshape societies.
+        </p>
+        <p>
+            Using interactive visualizations, you can trace migration flows in real-time and observe population dynamics across 
+            continents and countries. From shifts in population density to the paths of migration, this tool reveals the stories 
+            behind the data.
+        </p>
+        <p>
+            Designed for policymakers, researchers, and global thinkers, this project highlights the profound impact of migration 
+            on economic, social, and cultural landscapes worldwide. Dive in to explore the patterns and trends that define our 
+            interconnected world.
+        </p>
+    </div>
+    <div class="footer">
+        <h3>Interactive Visualization Project</h3>
+        <p>CAPP 30239: Data Visualization for Policy Analysis</p>
+        <h3>Data Sources and Libraries:</h3>
+        <ul>
+            <li><a href="https://ourworldindata.org/grapher/population?tab=map&time=1885" target="_blank">Our World in Data: Population</a></li>
+            <li><a href="https://www.un.org/development/desa/pd/data/international-migration-flows" target="_blank">UN: International Migration Flows</a></li>
+            <li><a href="https://worldmigrationreport.iom.int/wmr-2022-interactive/" target="_blank">World Migration Report 2022</a></li>
+            <li><a href="https://observablehq.com/@d3/gallery?utm_source=d3js-org&utm_medium=hero&utm_campaign=try-observablebodybody" target="_blank">D3.js Gallery</a></li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Migration Project</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            scroll-behavior: smooth; /* Desplazamiento suave */
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: #6a6a6a;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+        }
+
+        nav a:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .iframe-container {
+            margin-top: 60px; /* Espacio debajo del navbar */
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* Espacio entre los iframes */
+        }
+
+        iframe {
+            width: 100%;
+            height: 90vh;
+            border: none;
+        }
+
+        .highlight {
+            outline: 5px solid rgba(0, 123, 255, 0.5); /* Resalta el iframe activo */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <a href="#iframe1" onclick="scrollToIframe(event, 'iframe1')">Home</a>
+        <a href="#iframe2" onclick="scrollToIframe(event, 'iframe2')">Quiz</a>
+        <a href="#iframe3" onclick="scrollToIframe(event, 'iframe3')">Visualization 1</a>
+        <a href="#iframe4" onclick="scrollToIframe(event, 'iframe4')">Visualization 2</a>
+    </nav>
+
+    <!-- Iframe Container -->
+    <div class="iframe-container">
+        <iframe src="lp.html" id="iframe1"></iframe>
+        <iframe src="quiz.html" id="iframe2"></iframe>
+        <iframe src="icons.html" id="iframe3"></iframe>
+        <iframe src="mig.html" id="iframe4"></iframe>
+    </div>
+
+    <script>
+        // Función para desplazarse y ajustar la posición del iframe seleccionado
+        function scrollToIframe(event, iframeId) {
+            event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+
+            // Seleccionar el iframe al que queremos desplazarnos
+            const iframe = document.getElementById(iframeId);
+
+            // Calcular la posición ajustada para que el iframe quede centrado
+            const yOffset = -50; // Ajusta este valor para corregir el desplazamiento exacto
+            const yPosition = iframe.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+            // Desplazar la página
+            window.scrollTo({
+                top: yPosition,
+                behavior: 'smooth',
+            });
+
+            // Resaltar el iframe activo
+            highlightIframe(iframeId);
+        }
+
+        // Función para resaltar el iframe seleccionado
+        function highlightIframe(iframeId) {
+            // Eliminar el resaltado de todos los iframes
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => iframe.classList.remove('highlight'));
+
+            // Resaltar el iframe seleccionado
+            const selectedIframe = document.getElementById(iframeId);
+            if (selectedIframe) {
+                selectedIframe.classList.add('highlight');
+            }
+        }
+    </script>
+</body>
+</html>

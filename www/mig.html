@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>World Population Map</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      line-height: 1.6;
+      color: #4a4a4a;
+    }
+  
+    .main-container {
+      display: flex;
+      width: 100%;
+      height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
+    }
+  
+    .header-container {
+      width: 20%; /* Reducido a 20% */
+      box-sizing: border-box;
+      padding: 20px;
+    }
+  
+    .visualization-header {
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+  
+    .visualization-header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+  
+    .visualization-description {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+  
+    #my_dataviz-container {
+      width: 65%; /* Aumentado para el mapa */
+      position: relative;
+      box-sizing: border-box;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    #my_dataviz {
+      width: 100%;
+      height: 800px; /* Altura fija para el mapa */
+      background-color: #f0feff;
+      margin-bottom: 20px;
+    }
+  
+    .map-label {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 10px; /* Espaciado reducido */
+    }
+  
+    #bottom-controls {
+      display: flex;
+      /*flex-direction: column;*/
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-top: 10px; /* Subir el contenido para que quede centrado */
+    }
+  
+    #controls {
+      width: 15%; /* Aumentado a 15% */
+      background-color: #f0f0f0;
+      box-sizing: border-box;
+      padding: 10px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      font-family: 'Roboto', sans-serif;
+      height: 800px;
+      color: #4a4a4a;
+    }
+  
+    #country-filter {
+      width: 100%;
+      height: 700px;
+      padding: 5px;
+      font-size: 14px;
+      font-family: 'Roboto', sans-serif;
+      color: #4a4a4a; /* Texto gris oscuro */
+    }
+  
+    #play-button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  
+    #play-button:hover {
+      background-color: #0056b3;
+    }
+  
+    .timeline-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+  
+    .timeline-label {
+      font-size: 14px;
+    }
+  
+    #timeline {
+      width: 90%;
+    }
+  </style>
+  
+</head>
+<body>
+    <div class="main-container">
+        <!-- Columna de explicación -->
+        <div class="header-container">
+          <header class="visualization-header">
+            <h1>Tracing Journeys Global Migration<br>
+              <span class="year-range">(1990–2020)</span>
+            </h1>
+          </header>
+          <div class="visualization-description">
+            <section>
+              <h2>Overview</h2>
+              <p>This interactive map provides a comprehensive visualization of global population distribution and international migration trends between 1990 and 2020.</p>
+            </section>
+            <section>
+              <h2>Data Representation</h2>
+              <ul>
+                <li><span style="color: #007bff;">Blue dots</span>: Represent 1 million people.</li>
+                <li><span style="color: red;">Red triangles</span>: Represent 100,000 individuals migrating.</li>
+              </ul>
+            </section>
+            <section>
+                <h2>Functionality</h2>
+                <ul>
+                  <li><strong>Time Progression:</strong> Use the timeline or play button to observe annual changes in population and migration.</li>
+                  <li><strong>Country-Specific Analysis:</strong> Filter by country to focus on specific regions or migration routes.</li>
+                  <li><strong>Interactive Insights:</strong> Hover over countries to access detailed population and migration data for the selected year.</li>
+                </ul>
+              </section>
+          </div>
+        </div>
+      
+        <!-- Columna del mapa -->
+        <div id="my_dataviz-container">
+            <svg id="my_dataviz"></svg>
+            <div class="map-label">
+              <span style="color: #007bff;">One blue dot represents 1 million people</span><br>
+              <span style="color: red;">One red triangle represents 100,000 migrants</span>
+            </div>
+            <div id="bottom-controls">
+              <button id="play-button">▶</button>
+              <div class="timeline-container">
+                <span class="timeline-label">1990</span>
+                <input type="range" id="timeline" min="1990" max="2020" step="5" value="1990">
+                <span class="timeline-label">2020</span>
+              </div>
+            </div>
+          </div>
+          
+      
+        <!-- Columna de controles -->
+        <div id="controls">
+          <h2>Filters</h2>
+          <select id="country-filter" multiple>
+            <option value="All">All Countries</option>
+          </select>
+        </div>
+      </div>      
+  <script>
+    const width = 1000;
+    const height = 900;
+
+    const svg = d3.select("#my_dataviz")
+      .attr("width", width)
+      .attr("height", height);
+
+    const projection = d3.geoNaturalEarth1()
+      .scale(width / 1.3 / Math.PI)
+      .translate([width / 2, height / 2]);
+
+    const path = d3.geoPath().projection(projection);
+
+    const tooltip = d3.select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+    let currentYear = 1990;
+    const delay = 5000;
+    const years = [1990, 1995, 2000, 2005, 2010, 2015, 2020];
+
+    let selectedCountries = [];
+
+    Promise.all([
+      d3.json("data/world.geojson?v=" + Date.now()),
+      d3.json("data/population_data.json?v=" + Date.now()),
+      d3.json("data/migration.json?v=" + Date.now())
+    ]).then(([geoData, populationData, migrationData]) => {
+      const splittedCountries = geoData.features.flatMap(feature => {
+        if (feature.geometry.type === "MultiPolygon") {
+          return feature.geometry.coordinates.map(polygon => ({
+            type: "Feature",
+            properties: feature.properties,
+            geometry: { type: "Polygon", coordinates: polygon }
+          }));
+        }
+        return [feature];
+      });
+
+      const countryFilter = d3.select("#country-filter");
+      const uniqueCountries = [...new Set(populationData.map(d => d.Country))];
+      uniqueCountries.forEach(country => {
+        countryFilter.append("option")
+          .attr("value", country)
+          .text(country);
+      });
+
+      countryFilter.on("change", () => {
+        const selectedOptions = Array.from(countryFilter.node().selectedOptions).map(opt => opt.value);
+        selectedCountries = selectedOptions.includes("All") ? [] : selectedOptions;
+        drawDots(currentYear);
+        drawMigration(currentYear);
+      });
+
+      const drawMap = () => {
+        svg.selectAll("path")
+          .data(splittedCountries)
+          .join("path")
+          .attr("d", path)
+          .attr("fill", "#F6F6F6")
+          .attr("stroke", "darkgray")
+          .on("mouseover", function(event, d) {
+            const countryData = populationData.find(country =>
+              country.Country === d.properties.name &&
+              country.Year === currentYear &&
+              (selectedCountries.length === 0 || selectedCountries.includes(d.properties.name))
+            );
+            if (countryData) {
+              tooltip.transition().duration(200).style("opacity", 0.9);
+              tooltip.html(
+                `<strong>${countryData.Country}</strong><br>
+                Year: ${countryData.Year}<br>
+                Population: ${countryData["Population in millions"]}<br>
+                Migration: ${countryData["Migration %"]}<br>
+                Immigration: ${countryData["Immigration %"]}`
+                )
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 28) + "px");
+            }
+          })
+          .on("mousemove", function(event) {
+            tooltip.style("left", (event.pageX + 10) + "px")
+              .style("top", (event.pageY - 28) + "px");
+          })
+          .on("mouseout", function() {
+            tooltip.transition().duration(500).style("opacity", 0);
+          });
+      };
+
+      const drawDots = (year) => {
+        svg.selectAll(".dots").remove();
+
+        const yearData = populationData.filter(d =>
+          d.Year === year &&
+          (selectedCountries.length === 0 || selectedCountries.includes(d.Country))
+        );
+
+        yearData.forEach(country => {
+          const countryFeatures = splittedCountries.filter(f => f.properties.name === country.Country);
+
+          if (countryFeatures.length) {
+            const largestFeature = countryFeatures.reduce((largest, current) => {
+              const largestArea = d3.polygonArea(largest.geometry.coordinates[0]);
+              const currentArea = d3.polygonArea(current.geometry.coordinates[0]);
+              return currentArea > largestArea ? current : largest;
+            });
+
+            const points = [];
+            const bounds = path.bounds(largestFeature);
+            const [minX, minY] = bounds[0];
+            const [maxX, maxY] = bounds[1];
+
+            let attempts = 0;
+            while (points.length < country["Population dots"] && attempts < country["Population dots"] * 50) {
+              const x = Math.random() * (maxX - minX) + minX;
+              const y = Math.random() * (maxY - minY) + minY;
+
+              const lonLatPoint = projection.invert([x, y]);
+              if (d3.polygonContains(largestFeature.geometry.coordinates[0], lonLatPoint)) {
+                points.push([x, y]);
+              }
+              attempts++;
+            }
+
+            svg.append("g")
+              .attr("class", "dots")
+              .selectAll("circle")
+              .data(points)
+              .join("circle")
+              .attr("cx", d => d[0])
+              .attr("cy", d => d[1])
+              .attr("r", 2)
+              .attr("fill", "#007bff")
+              .attr("opacity", 0.7)
+              .attr("pointer-events", "none");
+          }
+        });
+      };
+
+      const drawMigration = (year) => {
+        svg.selectAll(".migrating-dots").remove();
+    
+        const yearData = migrationData.filter(d =>
+            d.Year === String(year) &&
+            (selectedCountries.length === 0 || selectedCountries.includes(d.Country))
+        );
+    
+        yearData.forEach(({ Country, Destination, "Migration dots": dots }) => {
+            const originFeatures = splittedCountries.filter(f => f.properties.name === Country);
+            const destinationFeatures = splittedCountries.filter(f => f.properties.name === Destination);
+    
+            if (originFeatures.length && destinationFeatures.length) {
+                // Encontrar el polígono más grande para el origen
+                const largestOriginFeature = originFeatures.reduce((largest, current) => {
+                    const largestArea = d3.polygonArea(largest.geometry.coordinates[0]);
+                    const currentArea = d3.polygonArea(current.geometry.coordinates[0]);
+                    return currentArea > largestArea ? current : largest;
+                });
+    
+                // Encontrar el polígono más grande para el destino
+                const largestDestFeature = destinationFeatures.reduce((largest, current) => {
+                    const largestArea = d3.polygonArea(largest.geometry.coordinates[0]);
+                    const currentArea = d3.polygonArea(current.geometry.coordinates[0]);
+                    return currentArea > largestArea ? current : largest;
+                });
+    
+                // Generar puntos dentro del polígono más grande del origen
+                const originBounds = path.bounds(largestOriginFeature);
+                const [originMinX, originMinY] = originBounds[0];
+                const [originMaxX, originMaxY] = originBounds[1];
+    
+                const points = [];
+                let attempts = 0;
+                while (points.length < dots && attempts < dots * 50) {
+                    const x = Math.random() * (originMaxX - originMinX) + originMinX;
+                    const y = Math.random() * (originMaxY - originMinY) + originMinY;
+    
+                    const lonLatPoint = projection.invert([x, y]);
+                    if (d3.polygonContains(largestOriginFeature.geometry.coordinates[0], lonLatPoint)) {
+                        points.push([x, y]);
+                    }
+                    attempts++;
+                }
+    
+                // Generar destinos dispersos dentro del polígono más grande del destino
+                const destBounds = path.bounds(largestDestFeature);
+                const [destMinX, destMinY] = destBounds[0];
+                const [destMaxX, destMaxY] = destBounds[1];
+    
+                const destinationPoints = [];
+                attempts = 0;
+                while (destinationPoints.length < dots && attempts < dots * 50) {
+                    const x = Math.random() * (destMaxX - destMinX) + destMinX;
+                    const y = Math.random() * (destMaxY - destMinY) + destMinY;
+    
+                    const lonLatPoint = projection.invert([x, y]);
+                    if (d3.polygonContains(largestDestFeature.geometry.coordinates[0], lonLatPoint)) {
+                        destinationPoints.push([x, y]);
+                    }
+                    attempts++;
+                }
+    
+                // Dibujar y animar los triángulos
+                const size = 6; // Tamaño del triángulo
+                const migratingTriangles = svg.append("g")
+                    .attr("class", "migrating-dots")
+                    .selectAll("path")
+                    .data(points)
+                    .join("path")
+                    .attr("d", d => {
+                        return `M ${d[0]} ${d[1]} 
+                                L ${d[0] - size / 2} ${d[1] + size} 
+                                L ${d[0] + size / 2} ${d[1] + size} 
+                                Z`;
+                    })
+                    .attr("fill", "#007bff")
+                    .attr("opacity", 0.7);
+    
+                migratingTriangles.transition()
+                    .duration(5000) // Tiempo de animación
+                    .attr("transform", (d, i) => {
+                        const [destX, destY] = destinationPoints[i];
+                        return `translate(${destX - d[0]}, ${destY - d[1]})`;
+                    })
+                    .attr("fill", "red");
+            }
+        });
+    };
+      
+
+      const playButton = d3.select("#play-button");
+      const timeline = d3.select("#timeline");
+
+      let isPlaying = false;
+      let timer;
+
+      const startAnimation = () => {
+        const nextYearIndex = years.indexOf(currentYear) + 1;
+    
+        if (nextYearIndex >= years.length) {
+            // Si llegamos al final (2020), detener la animación
+            clearTimeout(timer);
+            playButton.text("▶");
+            isPlaying = false;
+        } else {
+            // Avanzar al siguiente año
+            currentYear = years[nextYearIndex];
+            drawDots(currentYear);
+            drawMigration(currentYear);
+            timeline.property("value", currentYear);
+    
+            // Continuar la animación
+            timer = setTimeout(startAnimation, delay);
+        }
+    };
+    
+    playButton.on("click", () => {
+        if (isPlaying) {
+            // Pausar la animación
+            clearTimeout(timer);
+            playButton.text("▶");
+        } else {
+            // Iniciar o continuar la animación
+            startAnimation();
+            playButton.text("||");
+        }
+        isPlaying = !isPlaying;
+    });
+    
+    timeline.on("input", function () {
+        clearTimeout(timer);
+        isPlaying = false;
+        playButton.text("▶");
+        currentYear = +this.value;
+        drawDots(currentYear);
+        drawMigration(currentYear);
+    });
+    
+
+      drawMap();
+      drawDots(currentYear);
+      drawMigration(currentYear);
+    }).catch(error => console.error("Error loading data:", error));
+</script>
+
+  </body>
+</html>
