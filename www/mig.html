@@ -62,6 +62,17 @@
       background-color: #f0feff;
       margin-bottom: 20px;
     }
+
+    .tooltip {
+      position: absolute;
+      padding: 8px;
+      background: white;
+      border: 1px solid #333;
+      border-radius: 4px;
+      pointer-events: none;
+      font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
   
     .map-label {
       margin-top: 10px;
@@ -179,7 +190,7 @@
           </div>
           
       
-        <!-- Filter Column -->
+        <!-- Controls column -->
         <div id="controls">
           <h2>Filters</h2>
           <select id="country-filter" multiple>
@@ -341,21 +352,18 @@
             const destinationFeatures = splittedCountries.filter(f => f.properties.name === Destination);
     
             if (originFeatures.length && destinationFeatures.length) {
-                // Find the largest polygon for origin
                 const largestOriginFeature = originFeatures.reduce((largest, current) => {
                     const largestArea = d3.polygonArea(largest.geometry.coordinates[0]);
                     const currentArea = d3.polygonArea(current.geometry.coordinates[0]);
                     return currentArea > largestArea ? current : largest;
                 });
     
-                // Find the largest polygon for destination
                 const largestDestFeature = destinationFeatures.reduce((largest, current) => {
                     const largestArea = d3.polygonArea(largest.geometry.coordinates[0]);
                     const currentArea = d3.polygonArea(current.geometry.coordinates[0]);
                     return currentArea > largestArea ? current : largest;
                 });
     
-                // Generate points within the largest polygon of the origin
                 const originBounds = path.bounds(largestOriginFeature);
                 const [originMinX, originMinY] = originBounds[0];
                 const [originMaxX, originMaxY] = originBounds[1];
@@ -373,7 +381,6 @@
                     attempts++;
                 }
     
-                // Generate scattered destinations within the larger polygon of the destination
                 const destBounds = path.bounds(largestDestFeature);
                 const [destMinX, destMinY] = destBounds[0];
                 const [destMaxX, destMaxY] = destBounds[1];
@@ -391,7 +398,6 @@
                     attempts++;
                 }
     
-                // Drawing and animating triangles
                 const size = 6; 
                 const migratingTriangles = svg.append("g")
                     .attr("class", "migrating-dots")
@@ -430,7 +436,7 @@
     
         if (nextYearIndex >= years.length) {
             clearTimeout(timer);
-            playButton.text("▶");
+            playButton.text("Play");
             isPlaying = false;
         } else {
             currentYear = years[nextYearIndex];
@@ -445,10 +451,10 @@
     playButton.on("click", () => {
         if (isPlaying) {
             clearTimeout(timer);
-            playButton.text("▶");
+            playButton.text("Play");
         } else {
             startAnimation();
-            playButton.text("||");
+            playButton.text("Pause");
         }
         isPlaying = !isPlaying;
     });
@@ -456,7 +462,7 @@
     timeline.on("input", function () {
         clearTimeout(timer);
         isPlaying = false;
-        playButton.text("▶");
+        playButton.text("Play");
         currentYear = +this.value;
         drawDots(currentYear);
         drawMigration(currentYear);
