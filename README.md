@@ -15,7 +15,7 @@ Designed to be a useful tool for researchers, policymakers, and anyone intereste
 You can explore the project [here](https://mmbarrosmigrationviz.netlify.app/).
 
 
-![Project Screenshot](mapviz.png)  
+![Project Screenshot](www/mapviz.png)  
 
 ## Data Sources
 
